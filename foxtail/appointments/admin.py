@@ -15,7 +15,8 @@ class AppointmentAdmin(admin.ModelAdmin):
     )
     list_filter = (
         'status',
-        'clinic'
+        'language',
+        'clinic',
     )
     ordering = (
         'time_slot',
