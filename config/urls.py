@@ -6,6 +6,11 @@ from django.urls import include, path
 from django.views import defaults as default_views
 from django.views.generic import TemplateView
 
+# Changing the default site header
+admin.site.site_header = 'Foxtail Admin'  # default: "Django Administration"
+admin.site.index_title = 'Clinic administration'  # default: "Site administration"
+admin.site.site_title = 'Foxtail Admin'  # default: "Django site admin"
+
 urlpatterns = [
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
     path(
