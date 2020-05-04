@@ -45,6 +45,7 @@ class Appointment(TimeStampedModel):
     name = models.CharField('Name', max_length=255)
     phone = models.CharField('Phone', max_length=255)  # Intentionally not validating. Would use libphonenumber.
     email = models.EmailField('Email', max_length=50)  # Validate b/c emails are sent.
+    address = models.CharField('Address', max_length=255)  # No validation at all.
     slug = AutoSlugField('Appointment address', unique=True, always_update=False, populate_from='name')
     description = models.TextField('Description')
     clinic = models.ForeignKey(Clinic, on_delete=models.SET_NULL, null=True, related_name='appointments')
