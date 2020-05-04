@@ -10,7 +10,7 @@ services:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
     image: foxtail_local_django
-    container_name: django
+    container_name: django_fox
     depends_on:
       - postgres
     volumes:
@@ -19,7 +19,7 @@ services:
       - ./.envs/.local/.django
       - ./.envs/.local/.postgres
     ports:
-      - "8000:8000"
+      - "8002:8000"
     command: /start
 
   postgres:
@@ -27,7 +27,7 @@ services:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
     image: foxtail_production_postgres
-    container_name: postgres
+    container_name: postgres_fox
     volumes:
       - local_postgres_data:/var/lib/postgresql/data
       - local_postgres_data_backups:/backups
@@ -36,12 +36,12 @@ services:
 
   redis:
     image: redis:5.0
-    container_name: redis
+    container_name: redis_fox
 
   celeryworker:
     <<: *django
     image: foxtail_local_celeryworker
-    container_name: celeryworker
+    container_name: celeryworker_fox
     depends_on:
       - redis
       - postgres
@@ -52,7 +52,7 @@ services:
   celerybeat:
     <<: *django
     image: foxtail_local_celerybeat
-    container_name: celerybeat
+    container_name: celerybeat_fox
     depends_on:
       - redis
       - postgres
@@ -63,7 +63,7 @@ services:
   flower:
     <<: *django
     image: foxtail_local_flower
-    container_name: flower
+    container_name: flower_fox
     ports:
       - "5555:5555"
     command: /start-flower

@@ -73,7 +73,8 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "foxtail.users.apps.UsersConfig",
-    # Your stuff: custom apps go here
+    "foxtail.appointments.apps.AppointmentsConfig",
+    "foxtail.clinics.apps.ClinicsConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
