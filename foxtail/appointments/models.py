@@ -53,21 +53,23 @@ class Appointment(TimeStampedModel):
     # organization # TODO: is this needed? Or will the ForeignKey in Clinic the job?
     waiver = models.FileField(upload_to='waivers/%Y/%m/', blank=True)
 
-    class Status(models.TextChoices):
-        """ Let staff set the status re the waiter and scheduling. """
-        WAIVER_EMAILED = 'waiver-emailed', 'Pending: waiver emailed to client (waiting on client)'
-        WAIVER_SIGNED = 'waiver-signed', 'Pending: waiver signed and returned (awaiting scheduling)'
-        CONFIRMED = 'confirmed', 'Confirmed: client scheduled'
-
-    status = models.CharField('Status', choices=Status.choices, max_length=255, blank=True)
-
     class Language(models.TextChoices):
         """ Set the client's language abilities. """
-        KOREAN_NEED_INTERPRETER = 'korean-no-interpreter', 'Mono-lingual Korean: need interpreter'
-        KOREAN_WITH_INTERPRETER = 'korean-with-interpreter', 'Mono-lingual Korean: bringing own interpreter'
+        KOREAN_NEED_INTERPRETER = 'korean-no-interpreter', 'Korean: Need interpreter'
+        KOREAN_WITH_INTERPRETER = 'korean-with-interpreter', 'Korean: Bringing interpreter'
         ENGLISH = 'english', 'English: no interpreter needed'
 
     language = models.CharField('Language', choices=Language.choices, max_length=255)
+    attorney = models.CharField('Attorney', max_length=255, blank=True)
+
+    class Status(models.TextChoices):
+        """ Let staff set the status re the waiter and scheduling. """
+        WAIVER_EMAILED = 'waiver-emailed', 'Step 1: Pending waiver return'
+        WAIVER_SIGNED = 'waiver-signed', 'Step 2: Pending scheduling'
+        CONFIRMED = 'confirmed', 'Step 3: Client scheduled'
+        CONFIRMED_WITH_ATTORNEY = 'confirmed-with-attorney', 'Step 4: Client AND attorney scheduled'
+
+    status = models.CharField('Status', choices=Status.choices, max_length=255, default='waiver-emailed')
 
     def get_absolute_url(self):
         """ Returns an absolute URL this appointment entry. """
