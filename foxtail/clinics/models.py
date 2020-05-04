@@ -1,19 +1,21 @@
 """ foxtail/clinics/models.py """
 from django.db import models
-from model_utils.models import TimeFramedModel
-
-from autoslug import AutoSlugField
+from model_utils.models import TimeStampedModel
 
 
-class Clinic(TimeFramedModel):
+class Clinic(TimeStampedModel):
     """ Make clinic instances. """
-    organization = models.CharField('Organization', max_length=50)
+    class Organization(models.TextChoices):
+        """ Set the organizations. """
+        KCS = 'kcs', 'Korean Community Services (KCS)'
+        KAF = 'kaf', 'Korean American Federation (KAF)'
+    organization = models.CharField('Organization', max_length=50, choices=Organization.choices)
     date = models.DateField('Date')
-    time = models.TimeField('Time')
-    slug = AutoSlugField('Clinic URL', unique=True, always_update=False, populate_from=date)
+    start_time = models.TimeField('Start time')  # Validate in form. :(
+    end_time = models.TimeField('End time')  # Validate in form. :(
     # Appointments are from a ForeignKey out of appointments/models.py
 
     def __str__(self):
-        return f'Org: {self.organization}, Date: {self.date}'
+        return f'Organization: {self.organization.upper()}, Date: {self.date}'
 
 

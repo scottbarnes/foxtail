@@ -17,11 +17,11 @@ class Appointment(TimeStampedModel):
     slug = AutoSlugField('Appointment address', unique=True, always_update=False, populate_from='name')
     description = models.TextField('Description')
     clinic = models.ForeignKey(Clinic, on_delete=models.SET_NULL, null=True, related_name='appointments')
-    time_slot = models.CharField('Timeslot', max_length=255)
+    time_slot = models.CharField('Timeslot', max_length=255, blank=True)
     # tags  #  TODO: add support for tagging.
     # custom manager # TODO: add custom manager for Status and Language to allow for easier DB queries
     # organization # TODO: is this needed? Or will the ForeignKey in Clinic the job?
-    waiver = models.FileField(upload_to='waivers/%Y/%m/')
+    waiver = models.FileField(upload_to='waivers/%Y/%m/', blank=True)
 
     class Status(models.TextChoices):
         """ Let staff set the status re the waiter and scheduling. """
