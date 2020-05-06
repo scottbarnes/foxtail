@@ -98,11 +98,7 @@ INSTALLED_APPS += ["anymail"]  # noqa F405
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
 # https://anymail.readthedocs.io/en/stable/esps
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = env("DJANGO_EMAIL_HOST", default="")
-EMAIL_PORT = env("DJANGO_EMAIL_PORT", default="")
-EMAIL_HOST_USER = env("DJANGO_EMAIL_HOST_USER", default="")
-EMAIL_HOST_PASSWORD = env("DJANGO_EMAIL_HOST_PASSWORD", default="")
-EMAIL_USE_TLS = env("DJANGO_EMAIL_USE_TLS", default="")
+# Note: See 'Custom settings' below for more.
 # https://anymail.readthedocs.io/en/stable/installation/#anymail-settings-reference
 ANYMAIL = {}
 
@@ -170,5 +166,10 @@ LOGGING = {
     },
 }
 
-# Your stuff...
+# Custom settings
 # ------------------------------------------------------------------------------
+EMAIL_HOST = env("DJANGO_EMAIL_HOST", default="")
+EMAIL_PORT = env("DJANGO_EMAIL_PORT", default="")
+EMAIL_HOST_USER = env("DJANGO_EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = env("DJANGO_EMAIL_HOST_PASSWORD", default="")
+EMAIL_USE_TLS = env("DJANGO_EMAIL_USE_TLS", default="")
