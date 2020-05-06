@@ -11,9 +11,8 @@ services:
       context: .
       dockerfile: ./compose/production/django/Dockerfile
     image: foxtail_production_django
+    restart: always
     container_name: django_prod_fox
-    volumes:
-      - ./media:/app/media  # host_fs:docker_fs
     depends_on:
       - redis-prod-fox
       - postgres-prod-fox
@@ -29,6 +28,7 @@ services:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
     image: foxtail_production_postgres
+    restart: always
     container_name: postgres_prod_fox
     volumes:
       - production_postgres_data:/var/lib/postgresql/data
@@ -52,11 +52,13 @@ services:
 
   redis-prod-fox:
     image: redis:5.0
+    restart: always
     container_name: redis_prod_fox
 
   celeryworker-prod-fox:
     <<: *django
     image: foxtail_production_celeryworker
+    restart: always
     container_name: celeryworker_prod_fox
     ports: []
     command: /start-celeryworker
@@ -64,6 +66,7 @@ services:
   celerybeat-prod-fox:
     <<: *django
     image: foxtail_production_celerybeat
+    restart: always
     container_name: celerybeat_prod_fox
     ports: []
     command: /start-celerybeat
@@ -71,6 +74,7 @@ services:
   flower-prod-fox:
     <<: *django
     image: foxtail_production_flower
+    restart: always
     container_name: flower_prod_fox
     ports:
      - "5556:5555"
