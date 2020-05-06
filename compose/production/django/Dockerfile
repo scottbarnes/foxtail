@@ -45,6 +45,10 @@ COPY ./compose/production/django/celery/flower/start /start-flower
 RUN sed -i 's/\r$//g' /start-flower
 RUN chmod +x /start-flower
 COPY --chown=django:django . /app
+# Messing about with the stupid media mount issue
+# Using bind mounts instead in docker-compose.
+# RUN mkdir /app/foxtail/media
+# RUN chown -R django:django /app/foxtail/media
 
 USER django
 

@@ -168,8 +168,15 @@ LOGGING = {
 
 # Custom settings
 # ------------------------------------------------------------------------------
+# temporarily enable DEBUG
+# https://docs.djangoproject.com/en/dev/ref/settings/#debug
+DEBUG = env.bool("DJANGO_DEBUG", False)
+
+
+# Additional email settings
 EMAIL_HOST = env("DJANGO_EMAIL_HOST", default="")
 EMAIL_PORT = env("DJANGO_EMAIL_PORT", default="")
 EMAIL_HOST_USER = env("DJANGO_EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = env("DJANGO_EMAIL_HOST_PASSWORD", default="")
 EMAIL_USE_TLS = env("DJANGO_EMAIL_USE_TLS", default="")
+

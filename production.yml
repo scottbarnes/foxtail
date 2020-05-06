@@ -1,9 +1,11 @@
 version: '3'
 
-volumes:
-  production_postgres_data: {}
-  production_postgres_data_backups: {}
-  production_traefik: {}
+# Use bind volumes instead
+# volumes:
+#   production_postgres_data: {}
+#   production_postgres_data_backups: {}
+#   production_traefik: {}
+#   VOL_MEDIA: {}
 
 services:
   django-prod-fox: &django
@@ -13,9 +15,11 @@ services:
     image: foxtail_production_django
     restart: always
     container_name: django_prod_fox
+    volumes:
+      - ./VOL_MEDIA:/app/foxtail/media
     depends_on:
       - redis-prod-fox
-      - postgres-prod-fox
+      # - postgres-prod-fox
     env_file:
       - ./.envs/.production/.django
       - ./.envs/.production/.postgres
@@ -23,32 +27,32 @@ services:
       - "8003:5000"
     command: /start
 
-  postgres-prod-fox:
-    build:
-      context: .
-      dockerfile: ./compose/production/postgres/Dockerfile
-    image: foxtail_production_postgres
-    restart: always
-    container_name: postgres_prod_fox
-    volumes:
-      - production_postgres_data:/var/lib/postgresql/data
-      - production_postgres_data_backups:/backups
-    env_file:
-      - ./.envs/.production/.postgres
+ # postgres-prod-fox:
+ #   build:
+ #     context: .
+ #     dockerfile: ./compose/production/postgres/Dockerfile
+ #   image: foxtail_production_postgres
+ #   restart: always
+ #   container_name: postgres_prod_fox
+ #   volumes:
+ #     - production_postgres_data:/var/lib/postgresql/data
+ #     - production_postgres_data_backups:/backups
+ #   env_file:
+ #     - ./.envs/.production/.postgres
 
- #  traefik:
- #    build:
- #      context: .
- #      dockerfile: ./compose/production/traefik/Dockerfile
- #    image: foxtail_production_traefik
- #    depends_on:
- #      - django
- #    volumes:
- #      - production_traefik:/etc/traefik/acme
- #    ports:
- #      - "0.0.0.0:80:80"
- #      - "0.0.0.0:443:443"
- #      - "0.0.0.0:5555:5555"
+ # traefik:
+ #   build:
+ #     context: .
+ #     dockerfile: ./compose/production/traefik/Dockerfile
+ #   image: foxtail_production_traefik
+ #   depends_on:
+ #     - django
+ #   volumes:
+ #     - production_traefik:/etc/traefik/acme
+ #   ports:
+ #     - "0.0.0.0:80:80"
+ #     - "0.0.0.0:443:443"
+ #     - "0.0.0.0:5555:5555"
 
   redis-prod-fox:
     image: redis:5.0
