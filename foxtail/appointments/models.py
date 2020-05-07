@@ -1,6 +1,7 @@
 """ foxtail/appointments/models.py """
 from django.db import models
 from django.urls import reverse
+from model_utils import FieldTracker
 
 from autoslug import AutoSlugField
 from model_utils.models import TimeStampedModel
@@ -11,14 +12,14 @@ from foxtail.clinics.models import Clinic, TIME_CHOICES
 class Appointment(TimeStampedModel):
     """ Clinic appointments. Currently the clinic attendees are not 'users' of the platform. Instead there are
     'clinics' and each clinic has various 'appointments', people's names are just a field of an appointment."""
-    time_slot = models.CharField('Timeslot', max_length=255, blank=True, choices=TIME_CHOICES)
     name = models.CharField('Name', max_length=255)
+    time_slot = models.CharField('Timeslot', max_length=255, blank=True, choices=TIME_CHOICES)
+    clinic = models.ForeignKey(Clinic, on_delete=models.SET_NULL, null=True, related_name='appointments')
     phone = models.CharField('Phone', max_length=255)  # Intentionally not validating. Would use libphonenumber.
     email = models.EmailField('Email', max_length=50)  # Validate b/c emails are sent.
     address = models.CharField('Address', max_length=255)  # No validation at all.
     slug = AutoSlugField('Appointment address', unique=True, always_update=False, populate_from='name')
     description = models.TextField('Description')
-    clinic = models.ForeignKey(Clinic, on_delete=models.SET_NULL, null=True, related_name='appointments')
     # tags  #  TODO: add support for tagging.
     # custom manager # TODO: add custom manager for Status and Language to allow for easier DB queries
     # organization # TODO: is this needed? Or will the ForeignKey in Clinic the job?
@@ -41,6 +42,7 @@ class Appointment(TimeStampedModel):
         CONFIRMED_WITH_ATTORNEY = 'confirmed-with-attorney', 'Step 4: Client AND attorney scheduled'
 
     status = models.CharField('Status', choices=Status.choices, max_length=255, default='waiver-emailed')
+    tracker = FieldTracker(fields=['status'])
 
     def get_absolute_url(self):
         """ Returns an absolute URL this appointment entry. """

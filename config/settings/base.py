@@ -294,5 +294,5 @@ SOCIALACCOUNT_ADAPTER = "foxtail.users.adapters.SocialAccountAdapter"
 INSTALLED_APPS += ["compressor"]
 STATICFILES_FINDERS += ["compressor.finders.CompressorFinder"]
 
-# Your stuff...
+# Custom settings
 # ------------------------------------------------------------------------------
