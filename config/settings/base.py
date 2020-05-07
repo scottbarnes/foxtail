@@ -64,12 +64,13 @@ DJANGO_APPS = [
     "django.forms",
 ]
 THIRD_PARTY_APPS = [
-    "crispy_forms",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "django_celery_beat",
     "autoslug",
+    "crispy_forms",
+    "django_celery_beat",
+    "mail_templated",
 ]
 
 LOCAL_APPS = [

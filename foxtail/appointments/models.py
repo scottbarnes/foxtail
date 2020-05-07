@@ -6,6 +6,7 @@ from model_utils import FieldTracker
 from autoslug import AutoSlugField
 from model_utils.models import TimeStampedModel
 
+from config.settings.base import env
 from foxtail.clinics.models import Clinic, TIME_CHOICES
 
 
@@ -47,6 +48,38 @@ class Appointment(TimeStampedModel):
     def get_absolute_url(self):
         """ Returns an absolute URL this appointment entry. """
         # TODO add this once the URL + view are wired
+
+    def get_clinic_name(self) -> str:
+        """ Return the clinic's name based on the label of the choice in Clinic.Organizations. """
+        org: str = self.clinic.organization  # Get organization abbreviation.
+        clinics: dict = dict(Clinic.Organization.choices)  # List of tuples converted to dictionary.
+        org: str = clinics[org]
+        return org
+
+    def get_clinic_street_address(self) -> str:
+        """
+        Return the clinic street address as set... here.
+        TODO: fix the models so this stuff is stored in the clinic model.
+        """
+        org: str = self.clinic.organization
+        if org == 'kaf':
+            address: str = '9876 West Garden Grove Blvd, Garden Grove, CA 92844'
+        elif org == 'kcs':
+            address: str = '8352 Commonwealth Ave., Buena Park, CA 90621'
+        else:
+            address: str = 'ERROR NO ADDRESS'
+        return address
+
+    def get_clinic_phone_number(self) -> str:
+        """ Return the clinic phone number. """
+        org: str = self.clinic.organization
+        if org == 'kaf':
+            phone: str = '714-530-4810'
+        elif org == 'kcs':
+            phone: str = '714-503-6550'
+        else:
+            phone: str = 'ERROR NO PHONE'
+        return phone
 
     def __str__(self):
         return f'{self.name}'
