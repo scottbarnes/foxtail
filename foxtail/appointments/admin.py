@@ -11,6 +11,7 @@ class AppointmentAdmin(admin.ModelAdmin):
         'name',
         'time_slot',
         'clinic',
+        Appointment.get_clinic_date,
         'status',
     )
     list_filter = (

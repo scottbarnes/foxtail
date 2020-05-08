@@ -1,3 +1,4 @@
+""" foxtail.clinics.apps.py """
 from django.apps import AppConfig
 
 

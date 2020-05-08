@@ -49,6 +49,11 @@ class Appointment(TimeStampedModel):
         """ Returns an absolute URL this appointment entry. """
         # TODO add this once the URL + view are wired
 
+    def get_clinic_date(self) -> str:
+        """ Return the date of the clinic in YYYY-MM-DD. """
+        return self.clinic.date.strftime('%Y-%m-%d')
+    get_clinic_date.short_description = 'Date'  # Where in the world is .short_description documented?
+
     def get_clinic_name(self) -> str:
         """ Return the clinic's name based on the label of the choice in Clinic.Organizations. """
         org: str = self.clinic.organization  # Get organization abbreviation.
