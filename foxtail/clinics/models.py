@@ -1,10 +1,12 @@
 """ foxtail/clinics/models.py """
+from django.contrib.auth import get_user_model
 from django.db import models
 from model_utils.models import TimeStampedModel
 
 from guardian.shortcuts import get_objects_for_group
 
 from foxtail.organizations.models import Organization
+from foxtail.users.models import User
 
 
 TIME_CHOICES = (('07:00:00', '7:00 AM'), ('07:30:00', '7:30 AM'), ('08:00:00', '8:00 AM'), ('08:30:00', '8:30 AM'),
@@ -23,6 +25,8 @@ class Clinic(TimeStampedModel):
     date = models.DateField('Date')
     start_time = models.CharField('Start time', max_length=255, choices=TIME_CHOICES)
     end_time = models.CharField('End time', max_length=255, choices=TIME_CHOICES)
+    created_by = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, blank=True, null=True,
+                                   related_name='clinics_created')  # null=True necessary because of SET_NULL.
 
     def get_organization(self):
         # This should return the organization name for the clinic. Needs testing.
