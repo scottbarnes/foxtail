@@ -45,6 +45,9 @@ class ClinicAdmin(GuardedModelAdmin):
         'date',
         'start_time',
     )
+    list_filter = (
+        'organization',
+    )
     inlines = [
         AppointmentInLine
     ]
