@@ -36,8 +36,8 @@ class ClinicAdmin(GuardedModelAdmin):
         qs = super(ClinicAdmin, self).get_queryset(request)
         if request.user.is_superuser:
             return qs
-        q = get_objects_for_user(request.user, 'view_clinic', klass=Clinic, use_groups=True, accept_global_perms=False)
-        return q
+        qs = get_objects_for_user(request.user, 'view_clinic', klass=Clinic, use_groups=True, accept_global_perms=False)
+        return qs
     list_display = (
         'organization',
         'date',
