@@ -45,10 +45,6 @@ class Appointment(TimeStampedModel):
     status = models.CharField('Status', choices=Status.choices, max_length=255, default='waiver-emailed')
     tracker = FieldTracker(fields=['status'])
 
-    def get_absolute_url(self):
-        """ Returns an absolute URL this appointment entry. """
-        # TODO add this once the URL + view are wired
-
     def get_clinic_date(self) -> str:
         """ Return the date of the clinic in YYYY-MM-DD. """
         return self.clinic.date.strftime('%Y-%m-%d')
@@ -88,3 +84,8 @@ class Appointment(TimeStampedModel):
 
     def __str__(self):
         return f'{self.name}'
+
+    def get_absolute_url(self):
+        """ Returns an absolute URL this appointment entry. """
+        # TODO add this once the URL + view are wired
+

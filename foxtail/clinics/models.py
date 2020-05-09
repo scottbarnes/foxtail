@@ -2,6 +2,8 @@
 from django.db import models
 from model_utils.models import TimeStampedModel
 
+from guardian.shortcuts import get_objects_for_group
+
 from foxtail.organizations.models import Organization
 
 
@@ -21,10 +23,26 @@ class Clinic(TimeStampedModel):
     date = models.DateField('Date')
     start_time = models.CharField('Start time', max_length=255, choices=TIME_CHOICES)
     end_time = models.CharField('End time', max_length=255, choices=TIME_CHOICES)
+    # group = models.CharField('Group', max_length=255)
+    # user = models.CharField('User', max_length=255)
+
+    # class Meta:
+    #     default_permissions = ('add',)
+    #     # permissions = [
+    #     #     ('view_clinic', 'Can view clinic'),
+    #     #     ('change_clinic', 'Can change clinic'),
+    #     #     ('delete_clinic', 'Can delete clinic')
+    #     # ]
 
     def get_organization(self):
         # This should return the organization name for the clinic. Needs testing.
         return self.organization.name
+
+    # def get_clinics_by_user_group(self, request):
+    #     user = request.user
+    #     group = user.groups.first()
+    #     object_instances_with_permission = get_objects_for_group(group, 'view_clinic', klass=Clinic)
+    #     return object_instances_with_permission
 
     def __str__(self):
         return f'{self.organization.abbreviation}'

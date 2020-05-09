@@ -70,6 +70,7 @@ THIRD_PARTY_APPS = [
     "autoslug",
     "crispy_forms",
     "django_celery_beat",
+    "guardian",
     "mail_templated",
 ]
 
@@ -93,6 +94,7 @@ MIGRATION_MODULES = {"sites": "foxtail.contrib.sites.migrations"}
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
+    "guardian.backends.ObjectPermissionBackend",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
 AUTH_USER_MODEL = "users.User"
