@@ -19,7 +19,9 @@ class AppointmentInLine(admin.StackedInline):
 class ClinicAdmin(GuardedModelAdmin):
     """
     This was not at all intuitive to me. To make this work I needed to:
-    1. Give the group (e.g. KCS) the relevant permissions globally (/admin/auth/group/<gid>/);
+    1. Give the group (e.g. KCS) the relevant permissions (CRUD, but specifically Change) globally by visiting
+        localhost:8000/admin/auth/group/<gid>/; by default view_<model>, change_<model> etc. exist. Per
+        https://django-guardian.readthedocs.io/en/stable/userguide/assign.html.
     2. At this point, changing permissions using django-guardian for the object or instance did nothing and users
         could see all objects as usual (which is expected, given that they had global permissions via the group).
     3. To make those object/instance permissions take effect I needed to override get_queryset to use the query
