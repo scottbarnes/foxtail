@@ -1,8 +1,8 @@
 """ foxtail/clinics/admin.py """
 from django.contrib import admin
 
-from guardian.admin import GuardedModelAdmin, GuardedModelAdminMixin
-from guardian.shortcuts import get_objects_for_user, get_objects_for_group
+from guardian.admin import GuardedModelAdmin
+from guardian.shortcuts import get_objects_for_user
 
 from .models import Clinic
 from foxtail.appointments.models import Appointment
