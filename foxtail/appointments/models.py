@@ -30,8 +30,9 @@ class Appointment(TimeStampedModel):
         CONFIRMED = 'confirmed', 'Step 3: Client scheduled'
         CONFIRMED_WITH_ATTORNEY = 'confirmed-with-attorney', 'Step 4: Client AND attorney scheduled'
 
+
     name = models.CharField('Name', max_length=255)
-    time_slot = models.CharField('Timeslot', max_length=255, blank=True, choices=TIME_CHOICES)
+    time_slot = models.CharField('Time slot', max_length=255, blank=True, null=True, choices=TIME_CHOICES)
     clinic = models.ForeignKey(Clinic, on_delete=models.SET_NULL, null=True, related_name='appointments')
     organization = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True, related_name='appointments')
     phone = models.CharField('Phone', max_length=255)  # Intentionally not validating. Would use libphonenumber.
