@@ -13,7 +13,7 @@ class AppointmentInLine(admin.StackedInline):
     model = Appointment
     show_change_link = True
     ordering = ('time_slot',)  # Sorts the display of Appointment OBJECTS. Not the contents.
-
+    exclude = ['created_by']
 
 @admin.register(Clinic)
 class ClinicAdmin(GuardedModelAdmin):

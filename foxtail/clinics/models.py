@@ -33,6 +33,6 @@ class Clinic(TimeStampedModel):
         return self.organization.name
 
     def __str__(self):
-        return f'{self.organization.abbreviation}'
+        return f'{self.organization.abbreviation}: {self.date}'
 
 
