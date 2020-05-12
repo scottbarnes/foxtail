@@ -79,6 +79,7 @@ LOCAL_APPS = [
     "foxtail.appointments.apps.AppointmentsConfig",
     "foxtail.clinics.apps.ClinicsConfig",
     "foxtail.organizations.apps.OrganizationsConfig",
+    "foxtail.attorneys.apps.AttorneysConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

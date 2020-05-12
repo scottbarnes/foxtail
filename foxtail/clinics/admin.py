@@ -8,12 +8,13 @@ from .models import Clinic
 from foxtail.appointments.models import Appointment
 
 
-class AppointmentInLine(admin.StackedInline):
+class AppointmentInLine(admin.TabularInline):
     """ Edit Appointment instances from within the Clinic admin panel. """
     model = Appointment
     show_change_link = True
-    ordering = ('time_slot',)  # Sorts the display of Appointment OBJECTS. Not the contents.
-    exclude = ['created_by']
+    # ordering = ('time_slot',)  # Sorts the display of Appointment OBJECTS. Not the contents.
+    fields = ('attorney', 'time_slot', 'name', 'language', 'status')
+    # exclude = ['created_by', 'phone', 'email', 'address', 'organization', 'description', 'waiver',]
 
 @admin.register(Clinic)
 class ClinicAdmin(GuardedModelAdmin):

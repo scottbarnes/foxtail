@@ -29,8 +29,9 @@ def appointment_status_update_emails(sender, instance, created, **kwargs):
     to_email = instance.email
 
     if created:  # only True when object first created.
+        token = instance.get_waiver_upload_token()  # Generate the waiver_upload token with the Application method.
         send_mail(APPS_DIR / 'templates/appointments/emails/appointment-creation.tpl',
-                  {'appointment': instance},
+                  {'appointment': instance, 'token': token},
                   from_email,
                   [to_email]
                   )

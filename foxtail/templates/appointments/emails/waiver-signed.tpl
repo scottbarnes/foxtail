@@ -21,7 +21,7 @@
     {% with clinic_name=appointment.get_clinic_name %}
         <p>
             Thanks returning your signed waiver to {{ clinic_name }}. We'll now begin looking for an attorney to assist
-            you with an advisory consultation, though unfortunately we cannot guarantee that we will find on, as the
+            you with an advisory consultation, though unfortunately we cannot guarantee that we will find one, as the
             demand for pro bono attorneys is greater than the supply.
         </p>
 

@@ -22,6 +22,7 @@ urlpatterns = [
     path("users/", include("foxtail.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
+    path("appointments/", include("foxtail.appointments.urls", namespace="appointments")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if settings.DEBUG:
     # Static file serving when using Gunicorn + Uvicorn for local web socket development

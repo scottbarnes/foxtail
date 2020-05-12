@@ -76,3 +76,4 @@ class AppointmentAdmin(GuardedModelAdmin):
         'phone',
     )
     exclude = ['created_by']
+    # autocomplete_fields = ['attorney']

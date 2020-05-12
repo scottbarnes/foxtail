@@ -7,9 +7,12 @@ from django.urls import reverse
 from model_utils import FieldTracker
 
 from autoslug import AutoSlugField
+import jwt
 from model_utils.models import TimeStampedModel
+from time import time
 
 from config.settings.base import env
+from foxtail.attorneys.models import Attorney
 from foxtail.clinics.models import Clinic, Organization, TIME_CHOICES
 
 
@@ -33,8 +36,6 @@ class Appointment(TimeStampedModel):
 
     name = models.CharField('Name', max_length=255)
     time_slot = models.CharField('Time slot', max_length=255, blank=True, null=True, choices=TIME_CHOICES)
-    clinic = models.ForeignKey(Clinic, on_delete=models.SET_NULL, null=True, related_name='appointments')
-    organization = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True, related_name='appointments')
     phone = models.CharField('Phone', max_length=255)  # Intentionally not validating. Would use libphonenumber.
     email = models.EmailField('Email', max_length=50)  # Validate b/c emails are sent.
     address = models.CharField('Address', max_length=255)  # No validation at all.
@@ -45,9 +46,13 @@ class Appointment(TimeStampedModel):
     # organization # TODO: is this needed? Or will the ForeignKey in Clinic the job?
     waiver = models.FileField(upload_to='waivers/%Y/%m/', blank=True)
     language = models.CharField('Language', choices=Language.choices, max_length=255)
-    attorney = models.CharField('Attorney', max_length=255, blank=True)
+    # attorney = models.CharField('Attorney', max_length=255, blank=True)
     status = models.CharField('Status', choices=Status.choices, max_length=255, default='waiver-emailed')
     tracker = FieldTracker(fields=['status'])
+    # ForeignKeys
+    clinic = models.ForeignKey(Clinic, on_delete=models.SET_NULL, null=True, related_name='appointments')
+    attorney = models.ForeignKey(Attorney, on_delete=models.SET_NULL, null=True, related_name='appointments')
+    organization = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True, related_name='appointments')
     # Hidden/excluded fields
     created_by = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, blank=True, null=True,
                                    related_name='appointments_created')  # null=True necessary because of SET_NULL.
@@ -96,10 +101,37 @@ class Appointment(TimeStampedModel):
             phone: str = 'ERROR NO PHONE'
         return phone
 
+    def get_waiver_upload_token(self, expires_in=1209600):
+        """
+        Create a JSON web token to send with the initial email to a client. This token will
+        ollow the user to upload the wavier to their Appointment simply by clicking the link.
+        """
+        return jwt.encode(
+            {'upload_waiver': self.id, 'exp': time() + expires_in},
+            env('DJANGO_SECRET_KEY'), algorithm='HS256').decode('utf-8')
+
+    @staticmethod
+    def verify_waiver_upload_token(token):
+        """ Verify the JSON web token to allow a user to upload the waiver to their Appointment. """
+        try:
+            application_id = jwt.decode(token, env('DJANGO_SECRET_KEY'), algorithms=['HS256'])['upload_waiver']
+        except:
+            return
+        return Appointment.objects.get(id=application_id)
+
     def __str__(self):
         return f'{self.name}'
 
+
+    def get_waiver_absolute_url(self):
+        """
+        Return the url (including token argument) for the waiver upload.
+        There must be a better way to do this. :(
+        """
+        return reverse('')
+
     def get_absolute_url(self):
         """ Returns an absolute URL this appointment entry. """
+        pass
         # TODO add this once the URL + view are wired
 
