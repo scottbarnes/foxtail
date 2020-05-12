@@ -22,3 +22,4 @@ django-redis==4.11.0  # https://github.com/jazzband/django-redis
 django-autoslug==1.9.7 # https://github.com/justinmayer/django-autoslug/
 django-mail-templated==2.6.5 # https://github.com/artemrizhov/django-mail-templated
 django-guardian==2.2.0 # https://django-guardian.readthedocs.io/
+django-admin-sortable2==0.7.6 # https://github.com/jrief/django-admin-sortable2

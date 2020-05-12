@@ -1,6 +1,7 @@
 """ foxtail/clinics/admin.py """
 from django.contrib import admin, messages
 
+from adminsortable2.admin import SortableInlineAdminMixin
 from guardian.admin import GuardedModelAdmin
 from guardian.shortcuts import assign_perm, get_objects_for_user
 
@@ -8,13 +9,18 @@ from .models import Clinic
 from foxtail.appointments.models import Appointment
 
 
-class AppointmentInLine(admin.TabularInline):
+class AppointmentInLine(SortableInlineAdminMixin, admin.TabularInline):
     """ Edit Appointment instances from within the Clinic admin panel. """
     model = Appointment
     show_change_link = True
     # ordering = ('time_slot',)  # Sorts the display of Appointment OBJECTS. Not the contents.
     fields = ('attorney', 'time_slot', 'name', 'language', 'status')
     # exclude = ['created_by', 'phone', 'email', 'address', 'organization', 'description', 'waiver',]
+
+class AppointmentInLineTwo(admin.StackedInline):
+    model = Appointment
+    show_change_link = True
+    fields = ('name', 'description', 'language', 'status', )
 
 @admin.register(Clinic)
 class ClinicAdmin(GuardedModelAdmin):
@@ -75,6 +81,7 @@ class ClinicAdmin(GuardedModelAdmin):
     )
     exclude = ['created_by']
     inlines = [
-        AppointmentInLine
+        AppointmentInLine,
+        AppointmentInLineTwo
     ]
     ordering = ('-date',)  # Sorts the list on the main Clinics page in reverse chronological order.

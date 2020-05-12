@@ -72,6 +72,7 @@ THIRD_PARTY_APPS = [
     "django_celery_beat",
     "guardian",
     "mail_templated",
+    "adminsortable2",
 ]
 
 LOCAL_APPS = [

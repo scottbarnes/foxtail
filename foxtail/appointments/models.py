@@ -51,11 +51,17 @@ class Appointment(TimeStampedModel):
     tracker = FieldTracker(fields=['status'])
     # ForeignKeys
     clinic = models.ForeignKey(Clinic, on_delete=models.SET_NULL, null=True, related_name='appointments')
-    attorney = models.ForeignKey(Attorney, on_delete=models.SET_NULL, null=True, related_name='appointments')
+    attorney = models.ForeignKey(Attorney, on_delete=models.SET_NULL, null=True, blank=True, related_name='appointments')
     organization = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True, related_name='appointments')
     # Hidden/excluded fields
     created_by = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, blank=True, null=True,
                                    related_name='appointments_created')  # null=True necessary because of SET_NULL.
+    # For django-admin-sortable2
+    admin_order = models.PositiveSmallIntegerField(default=0, blank=False, null=False)
+
+    class Meta(object):
+        # For django-admin-sortable2
+        ordering = ['admin_order']
 
     def clean(self) -> None:
         # Make sure scheduled clinic and organization match
