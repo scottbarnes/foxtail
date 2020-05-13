@@ -43,7 +43,6 @@ class Appointment(TimeStampedModel):
     description = models.TextField('Description')
     # tags  #  TODO: add support for tagging.
     # custom manager # TODO: add custom manager for Status and Language to allow for easier DB queries
-    # organization # TODO: is this needed? Or will the ForeignKey in Clinic the job?
     waiver = models.FileField(upload_to='waivers/%Y/%m/', blank=True)
     language = models.CharField('Language', choices=Language.choices, max_length=255)
     # attorney = models.CharField('Attorney', max_length=255, blank=True)
