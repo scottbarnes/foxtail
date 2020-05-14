@@ -72,3 +72,5 @@ CELERY_TASK_EAGER_PROPAGATES = True
 
 # Custom settings
 # ------------------------------------------------------------------------------
+CELERY_TASK_ALWAYS_EAGER = True
+

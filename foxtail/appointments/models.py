@@ -102,13 +102,6 @@ class Appointment(TimeStampedModel):
         return date
     get_clinic_date.short_description = 'Date'  # Where in the world is .short_description documented?
 
-    # def get_clinic_name(self) -> str:
-    #     """ Return the clinic's name based on the label of the choice in Clinic.Organizations. """
-    #     org: str = self.clinic.organization  # Get organization abbreviation.
-    #     clinics: dict = dict(Clinic.Organization.choices)  # List of tuples converted to dictionary.
-    #     org: str = clinics[org]
-    #     return org
-
     def get_clinic_street_address(self) -> str:
         """
         Return the clinic street address as set... here.
@@ -119,15 +112,6 @@ class Appointment(TimeStampedModel):
             address: str = 'ERROR NO ADDRESS'
         return address
 
-        # org: str = self.clinic.organization
-        # if org == 'kaf':
-        #     address: str = '9876 West Garden Grove Blvd, Garden Grove, CA 92844'
-        # elif org == 'kcs':
-        #     address: str = '8352 Commonwealth Ave., Buena Park, CA 90621'
-        # else:
-        #     address: str = 'ERROR NO ADDRESS'
-        # return address
-
     def get_clinic_phone_number(self) -> str:
         """ Return the clinic phone number. """
         try:
@@ -135,15 +119,6 @@ class Appointment(TimeStampedModel):
         except:
             phone: str = 'ERROR NO PHONE'
         return phone
-
-        # org: str = self.clinic.organization
-        # if org == 'kaf':
-        #     phone: str = '714-530-4810'
-        # elif org == 'kcs':
-        #     phone: str = '714-503-6550'
-        # else:
-        #     phone: str = 'ERROR NO PHONE'
-        # return phone
 
     def get_waiver_upload_token(self, expires_in=1209600):
         """

@@ -52,7 +52,7 @@ class AppointmentAdmin(GuardedModelAdmin):
         creator = obj.created_by
         if creator.groups.count() != 1:
             if not get_groups_with_perms(obj):
-                messages.add_message(request, messages.WARNING, 'Remember: until you you chang this APPOINTMENT\'S '
+                messages.add_message(request, messages.WARNING, 'Remember: until you you change this APPOINTMENT\'S '
                                                                 'object permissions, no organization can see it.')
         else:
             group = creator.groups.first()

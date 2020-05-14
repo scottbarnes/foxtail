@@ -27,7 +27,7 @@ def send_two_day_appointment_reminders():
                       {'appointment': appointment},
                       from_email,
                       [to_email]
-                    )
+                      )
 
 
 

@@ -1,47 +1,42 @@
 {% extends 'mail_templated/base.tpl' %}
 
 {% block subject %}
-    Reminder of your legal clinic appointment at {{ appointment.time_slot }} on
-    {{ appoinment.clinic.date|date:'l, F m' }}
+Reminder: legal clinic appointment at {{ appointment.time_slot }} on {{ appoinment.clinic.date|date:'l, F m' }}
 {% endblock subject %}
 
 {% block body %}
     {% with clinic_name=appointment.organization %}
-        We've found an attorney who can give you a pro bono advisory consultation.
-
-        You've been scheduled for the {{ clinic_name }} pro bono legal clinic as follows:
-        {% comment %}
-        See https://docs.djangoproject.com/en/3.0/ref/templates/builtins/#std:templatefilter-date for date filter.
-        {% endcomment %}
+        As a reminder, you have a legal clinic appointment scheduled with {{ clinic_name }} in two days as follows:
         Date: {{ appointment.clinic.date|date:'l, F m, Y' }}
         Time: {{ appointment.time_slot }}
         Location: {{ appointment.get_clinic_street_address }}
         Phone: {{ appointment.get_clinic_phone_number }}
 
+        If you *cannot* make the clinic appointment, please contact the organization to let them know so someone else
+        can be scheduled instead.
+
         PLEASE NOTE: THIS EMAIL ACCOUNT IS UNATTENDED. This means nobody checks for unread messages. If you have questions
         about your clinic appointment, please contact {{ clinic_name }} at {{ appointment.get_clinic_phone_number }}.
     {% endwith %}
-{% endblock body %}
+{% endblock %}
 
 {% block html %}
     {% with clinic_name=appointment.get_clinic_name %}
-        <p>We've found an attorney who can give you a pro bono advisory consultation.</p>
-
+        <p>As a reminder, you have a legal clinic appointment scheduled with {{ clinic_name }} in two days as follows:</p>
         <p>
-            You've been scheduled for the {{ clinic_name }} pro bono legal clinic as follows:
-            {% comment %}
-            See https://docs.djangoproject.com/en/3.0/ref/templates/builtins/#std:templatefilter-date for date filter.
-            {% endcomment %}
             Date: {{ appointment.clinic.date|date:'l, F m, Y' }}
             Time: {{ appointment.time_slot }}
             Location: {{ appointment.get_clinic_street_address }}
             Phone: {{ appointment.get_clinic_phone_number }}
         </p>
-
+        <p>
+            If you *cannot* make the clinic appointment, please contact the organization to let them know so someone else
+            can be scheduled instead.
+        </p>
         <p>
             PLEASE NOTE: THIS EMAIL ACCOUNT IS UNATTENDED. This means nobody checks for unread messages. If you have
             questions about your clinic appointment, please contact {{ clinic_name }} at
             {{ appointment.get_clinic_phone_number }}.
         </p>
     {% endwith %}
-{% endblock html %}
+{% endblock %}
