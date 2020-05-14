@@ -72,27 +72,34 @@ class Appointment(TimeStampedModel):
         # Make sure attorney is not already scheduled for this date and time.
         def check_for_double_booked_attorney(attorney):
             """ Check the attorney's schedule to see if he or she is already booked at this date and time. """
-            # Need to continue if it's checking itself or it will never save.
-            this_date = self.clinic.date
-            this_time = self.time_slot
-            appointments = attorney.appointments.all()  # QuerySet of other appointments.
-            for appointment in appointments:
-                if appointment.id == self.id:
-                    # Bail on this iteration, otherwise it's impossible to save an existing object b/c it will
-                    # always have the same appointment date+time as itself.
-                    continue
-                if appointment.clinic.date == this_date:
-                    if appointment.time_slot == this_time:
-                        raise ValidationError({'attorney': f'This attorney is already scheduled with'
-                                                           f' {appointment.name} on {appointment.clinic.date}'
-                                                           f' at {appointment.time_slot}.'})
+            if attorney:  # Check if there are any attorneys; save breaks otherwise.
+                # Need to continue if it's checking itself or it will never save.
+                this_date = self.clinic.date
+                this_time = self.time_slot
+                appointments = attorney.appointments.all()  # QuerySet of other appointments.
+                for appointment in appointments:
+                    if appointment.id == self.id:
+                        # Bail on this iteration, otherwise it's impossible to save an existing object b/c it will
+                        # always have the same appointment date+time as itself.
+                        continue
+                    try:
+                        if appointment.clinic.date == this_date:
+                            if appointment.time_slot == this_time:
+                                raise ValidationError({'attorney': f'This attorney is already scheduled with'
+                                                                   f' {appointment.name} on {appointment.clinic.date}'
+                                                                   f' at {appointment.time_slot}.'})
+                    except AttributeError as e:
+                        pass
 
         check_for_double_booked_attorney(self.attorney)
 
     def get_clinic_date(self) -> str:
         """ Return the date of the clinic in YYYY-MM-DD. """
-        return self.clinic.date.strftime('%Y-%m-%d')
-
+        try:  # Catch errors from deleted clinics.
+            date: str = self.clinic.date.strftime('%Y-%m-%d')
+        except AttributeError as e:
+            date: str = "Clinic deleted?"
+        return date
     get_clinic_date.short_description = 'Date'  # Where in the world is .short_description documented?
 
     # def get_clinic_name(self) -> str:
@@ -105,27 +112,38 @@ class Appointment(TimeStampedModel):
     def get_clinic_street_address(self) -> str:
         """
         Return the clinic street address as set... here.
-        TODO: fix the models so this stuff is stored in the clinic model.
         """
-        org: str = self.clinic.organization
-        if org == 'kaf':
-            address: str = '9876 West Garden Grove Blvd, Garden Grove, CA 92844'
-        elif org == 'kcs':
-            address: str = '8352 Commonwealth Ave., Buena Park, CA 90621'
-        else:
+        try:
+            address: str = self.organization.location
+        except:
             address: str = 'ERROR NO ADDRESS'
         return address
 
+        # org: str = self.clinic.organization
+        # if org == 'kaf':
+        #     address: str = '9876 West Garden Grove Blvd, Garden Grove, CA 92844'
+        # elif org == 'kcs':
+        #     address: str = '8352 Commonwealth Ave., Buena Park, CA 90621'
+        # else:
+        #     address: str = 'ERROR NO ADDRESS'
+        # return address
+
     def get_clinic_phone_number(self) -> str:
         """ Return the clinic phone number. """
-        org: str = self.clinic.organization
-        if org == 'kaf':
-            phone: str = '714-530-4810'
-        elif org == 'kcs':
-            phone: str = '714-503-6550'
-        else:
+        try:
+            phone: str = self.organization.phone
+        except:
             phone: str = 'ERROR NO PHONE'
         return phone
+
+        # org: str = self.clinic.organization
+        # if org == 'kaf':
+        #     phone: str = '714-530-4810'
+        # elif org == 'kcs':
+        #     phone: str = '714-503-6550'
+        # else:
+        #     phone: str = 'ERROR NO PHONE'
+        # return phone
 
     def get_waiver_upload_token(self, expires_in=1209600):
         """
