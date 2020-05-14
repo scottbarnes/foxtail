@@ -3,7 +3,7 @@ from django import forms
 from django.contrib import admin, messages
 
 from guardian.admin import GuardedModelAdmin
-from guardian.shortcuts import assign_perm, get_objects_for_user
+from guardian.shortcuts import assign_perm, get_objects_for_user, get_groups_with_perms
 
 from .models import Appointment
 
@@ -51,8 +51,9 @@ class AppointmentAdmin(GuardedModelAdmin):
         # With the object persisted, permissions can now be granted.
         creator = obj.created_by
         if creator.groups.count() != 1:
-            messages.add_message(request, messages.WARNING, 'Remember: until you you chang this appointment\'s object'
-                                                            ' permissions, no organization can see it.')
+            if not get_groups_with_perms(obj):
+                messages.add_message(request, messages.WARNING, 'Remember: until you you chang this APPOINTMENT\'S '
+                                                                'object permissions, no organization can see it.')
         else:
             group = creator.groups.first()
             assign_perm('change_appointment', group, obj)

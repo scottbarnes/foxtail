@@ -3,7 +3,7 @@ from django.contrib import admin, messages
 
 from adminsortable2.admin import SortableInlineAdminMixin
 from guardian.admin import GuardedModelAdmin
-from guardian.shortcuts import assign_perm, get_objects_for_user
+from guardian.shortcuts import assign_perm, get_objects_for_user, get_groups_with_perms
 
 from .models import Clinic
 from foxtail.appointments.models import Appointment
@@ -17,10 +17,16 @@ class AppointmentInLine(SortableInlineAdminMixin, admin.TabularInline):
     fields = ('attorney', 'time_slot', 'name', 'language', 'status')
     # exclude = ['created_by', 'phone', 'email', 'address', 'organization', 'description', 'waiver',]
 
+    # def clean(self):
+    #     """ Validate the Appointment input. """
+
+
 class AppointmentInLineTwo(admin.StackedInline):
     model = Appointment
     show_change_link = True
-    fields = ('name', 'description', 'language', 'status', )
+    fields = ('name', 'description', 'language', 'status',)
+    # readonly_fields = ('name', 'description', 'language', 'status',)
+
 
 @admin.register(Clinic)
 class ClinicAdmin(GuardedModelAdmin):
@@ -63,8 +69,9 @@ class ClinicAdmin(GuardedModelAdmin):
         # With the object persisted, permissions can now be granted.
         creator = obj.created_by
         if creator.groups.count() != 1:
-            messages.add_message(request, messages.WARNING, 'Remember: until you you chang this clinic\'s object'
-                                                            ' permissions, no organization can see it.')
+            if not get_groups_with_perms(obj):
+                messages.add_message(request, messages.WARNING, 'Remember: until you you chang this *CLINIC\'S* object'
+                                                                ' permissions, no organization can see it.')
         else:
             group = creator.groups.first()
             assign_perm('change_clinic', group, obj)

@@ -12,5 +12,8 @@ class Attorney(TimeStampedModel):
     created_by = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, blank=True, null=True,
                                    related_name='attorneys_created')  # null=True necessary because of SET_NULL.
 
+    class Meta:
+        ordering =('name',)  # Put attorneys in order when they're listed (e.g. in the admin panel drop downs).
+
     def __str__(self):
         return self.name

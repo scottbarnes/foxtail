@@ -33,7 +33,6 @@ class Appointment(TimeStampedModel):
         CONFIRMED = 'confirmed', 'Step 3: Client scheduled'
         CONFIRMED_WITH_ATTORNEY = 'confirmed-with-attorney', 'Step 4: Client AND attorney scheduled'
 
-
     name = models.CharField('Name', max_length=255)
     time_slot = models.CharField('Time slot', max_length=255, blank=True, null=True, choices=TIME_CHOICES)
     phone = models.CharField('Phone', max_length=255)  # Intentionally not validating. Would use libphonenumber.
@@ -50,7 +49,8 @@ class Appointment(TimeStampedModel):
     tracker = FieldTracker(fields=['status'])
     # ForeignKeys
     clinic = models.ForeignKey(Clinic, on_delete=models.SET_NULL, null=True, related_name='appointments')
-    attorney = models.ForeignKey(Attorney, on_delete=models.SET_NULL, null=True, blank=True, related_name='appointments')
+    attorney = models.ForeignKey(Attorney, on_delete=models.SET_NULL, null=True, blank=True,
+                                 related_name='appointments')
     organization = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True, related_name='appointments')
     # Hidden/excluded fields
     created_by = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, blank=True, null=True,
@@ -69,9 +69,30 @@ class Appointment(TimeStampedModel):
         if self.clinic.date < Date.today():
             raise ValidationError({'clinic': 'The clinic date can\'t be in the past'})
 
+        # Make sure attorney is not already scheduled for this date and time.
+        def check_for_double_booked_attorney(attorney):
+            """ Check the attorney's schedule to see if he or she is already booked at this date and time. """
+            # Need to continue if it's checking itself or it will never save.
+            this_date = self.clinic.date
+            this_time = self.time_slot
+            appointments = attorney.appointments.all()  # QuerySet of other appointments.
+            for appointment in appointments:
+                if appointment.id == self.id:
+                    # Bail on this iteration, otherwise it's impossible to save an existing object b/c it will
+                    # always have the same appointment date+time as itself.
+                    continue
+                if appointment.clinic.date == this_date:
+                    if appointment.time_slot == this_time:
+                        raise ValidationError({'attorney': f'This attorney is already scheduled with'
+                                                           f' {appointment.name} on {appointment.clinic.date}'
+                                                           f' at {appointment.time_slot}.'})
+
+        check_for_double_booked_attorney(self.attorney)
+
     def get_clinic_date(self) -> str:
         """ Return the date of the clinic in YYYY-MM-DD. """
         return self.clinic.date.strftime('%Y-%m-%d')
+
     get_clinic_date.short_description = 'Date'  # Where in the world is .short_description documented?
 
     # def get_clinic_name(self) -> str:
@@ -127,7 +148,6 @@ class Appointment(TimeStampedModel):
     def __str__(self):
         return f'{self.name}'
 
-
     def get_waiver_absolute_url(self):
         """
         Return the url (including token argument) for the waiver upload.
@@ -139,4 +159,3 @@ class Appointment(TimeStampedModel):
         """ Returns an absolute URL this appointment entry. """
         pass
         # TODO add this once the URL + view are wired
-
