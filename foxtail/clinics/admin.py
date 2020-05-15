@@ -89,6 +89,6 @@ class ClinicAdmin(GuardedModelAdmin):
     exclude = ['created_by']
     inlines = [
         AppointmentInLine,
-        AppointmentInLineTwo
+        # AppointmentInLineTwo
     ]
     ordering = ('-date',)  # Sorts the list on the main Clinics page in reverse chronological order.

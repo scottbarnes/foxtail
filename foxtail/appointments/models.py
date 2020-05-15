@@ -90,6 +90,9 @@ class Appointment(TimeStampedModel):
                                                                    f' at {appointment.time_slot}.'})
                     except AttributeError as e:
                         pass
+                    # Save after loop to ensure the list is checked against itself and not just against already
+                    # saved entries.
+                    self.save()
 
         check_for_double_booked_attorney(self.attorney)
 
