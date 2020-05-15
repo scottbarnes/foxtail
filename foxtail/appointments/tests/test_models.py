@@ -41,7 +41,6 @@ class AppointmentModelTests(TestCase):
             time_slot=self.appointment_two.time_slot,  # And the time slot.
         )
 
-
     def test_clean_same_organizations(self):
         # Very a full clean works with the two organizations as the same
         self.assertEqual(self.appointment.organization, self.clinic.organization)

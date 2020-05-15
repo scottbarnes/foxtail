@@ -48,6 +48,7 @@ class AppointmentAdmin(GuardedModelAdmin):
             assign_perm('change_appointment', group, obj)
             assign_perm('view_appointment', group, obj)
             assign_perm('delete_appointment', group, obj)
+        # No need to save again because the permissions don't need saving, it seems.
 
     list_display = (
         'name',
