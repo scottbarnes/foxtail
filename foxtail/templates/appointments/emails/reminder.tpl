@@ -1,14 +1,17 @@
 {% extends 'mail_templated/base.tpl' %}
+{% comment %}
+This is called from foxtail/appointments/tasks.py
+{% endcomment %}
 
 {% block subject %}
-Reminder: legal clinic appointment at {{ appointment.time_slot }} on {{ appoinment.clinic.date|date:'l, F m' }}
+Reminder: legal clinic appointment at {{ appointment.get_appointment_time_in_am_pm }} on {{ appoinment.clinic.date|date:'l, F m' }}
 {% endblock subject %}
 
 {% block body %}
     {% with clinic_name=appointment.organization %}
         As a reminder, you have a legal clinic appointment scheduled with {{ clinic_name }} in two days as follows:
         Date: {{ appointment.clinic.date|date:'l, F m, Y' }}
-        Time: {{ appointment.time_slot }}
+        Time: {{ appointment.get_appointment_time_in_am_pm }}
         Location: {{ appointment.get_clinic_street_address }}
         Phone: {{ appointment.get_clinic_phone_number }}
 
@@ -25,7 +28,7 @@ Reminder: legal clinic appointment at {{ appointment.time_slot }} on {{ appoinme
         <p>As a reminder, you have a legal clinic appointment scheduled with {{ clinic_name }} in two days as follows:</p>
         <p>
             Date: {{ appointment.clinic.date|date:'l, F m, Y' }}
-            Time: {{ appointment.time_slot }}
+            Time: {{ appointment.get_appointment_time_in_am_pm }}
             Location: {{ appointment.get_clinic_street_address }}
             Phone: {{ appointment.get_clinic_phone_number }}
         </p>

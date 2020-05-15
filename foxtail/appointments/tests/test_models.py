@@ -63,3 +63,14 @@ class AppointmentModelTests(TestCase):
         with self.assertRaises(ValidationError):
             self.appointment_three.full_clean()
 
+    def test_get_appointment_time_in_am_pm(self):
+        self.appointment_two.time_slot = '16:00'
+        get_app = self.appointment_two.get_appointment_time_in_am_pm
+        self.assertEqual(get_app(), '4:00 PM')
+
+        self.appointment_two.time_slot = ''
+        self.assertEqual(get_app(), 'NO TIME SET')
+
+        self.appointment_two.time_slot = None
+        self.assertEqual(get_app(), 'NO TIME SET')
+

@@ -1,5 +1,6 @@
 """ foxtail/appointments/models.py """
 from datetime import date as Date
+from datetime import datetime
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -101,6 +102,20 @@ class Appointment(TimeStampedModel):
             date: str = "Clinic deleted?"
         return date
     get_clinic_date.short_description = 'Date'  # Where in the world is .short_description documented?
+
+    def get_appointment_time_in_am_pm(self) -> str:
+        """
+        Return the appointment time in am/pm.
+        """
+        try:
+            time = self.time_slot  # HH:MM 24 hour format.
+            time = datetime.strptime(time, '%H:%M')  # Make the time a date time.
+            time = time.strftime('%-I:%M %p')  # And make it a string again. There has to be a better way!
+        except (ValueError, TypeError):
+            time = 'NO TIME SET'
+        return time
+
+
 
     def get_clinic_street_address(self) -> str:
         """
