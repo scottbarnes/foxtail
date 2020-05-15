@@ -45,7 +45,6 @@ class Appointment(TimeStampedModel):
     # custom manager # TODO: add custom manager for Status and Language to allow for easier DB queries
     waiver = models.FileField(upload_to='waivers/%Y/%m/', blank=True)
     language = models.CharField('Language', choices=Language.choices, max_length=255)
-    # attorney = models.CharField('Attorney', max_length=255, blank=True)
     status = models.CharField('Status', choices=Status.choices, max_length=255, default='waiver-emailed')
     tracker = FieldTracker(fields=['status'])
     # ForeignKeys

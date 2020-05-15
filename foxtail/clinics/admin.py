@@ -24,7 +24,7 @@ class AppointmentInLine(SortableInlineAdminMixin, admin.TabularInline):
 class AppointmentInLineTwo(admin.StackedInline):
     model = Appointment
     show_change_link = True
-    fields = ('name', 'description', 'language', 'status',)
+    fields = ('attorney', 'time_slot', 'name', 'language', 'status', 'description')
     # readonly_fields = ('name', 'description', 'language', 'status',)
 
 

@@ -8,17 +8,6 @@ from guardian.shortcuts import assign_perm, get_objects_for_user, get_groups_wit
 from .models import Appointment
 
 
-# class AppointmentForm(forms.ModelForm):
-#     class Meta:
-#         model = Appointment
-#
-#     def clean(self):
-#         """ Custom validation. """
-#         clinic = self.cleaned_data.get('clinic')
-#
-#         return
-
-
 @admin.register(Appointment)
 class AppointmentAdmin(GuardedModelAdmin):
     """
