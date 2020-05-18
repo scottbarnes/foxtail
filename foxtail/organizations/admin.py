@@ -39,9 +39,6 @@ class OrganizationAdmin(GuardedModelAdmin):
         4. Adding users TO the group.
         """
         if obj.id is None:  # Only send messages with new objects.
-            messages.add_message(request, messages.WARNING,
-                                 'After creating an organization (1) add a group for it,'
-                                 ' (2) give the group permissions to view+change the'
-                                 ' organization, and (3) add users to the group.')
+            messages.add_message(request, messages.WARNING, 'Don\'t forget to add users to your group')
         # Don't forget to save.
         super(OrganizationAdmin, self).save_model(self, obj, form, change)

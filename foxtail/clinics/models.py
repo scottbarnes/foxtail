@@ -37,7 +37,10 @@ class Clinic(TimeStampedModel):
         return self.organization.name
 
     def __str__(self):
-        return f'{self.organization.abbreviation}: {self.date}'
+        try:
+            return f'{self.organization.abbreviation}: {self.date}'
+        except:
+            return 'ERROR'
 
 
 class ClinicProxy(Clinic):
