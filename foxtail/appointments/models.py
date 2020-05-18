@@ -102,7 +102,7 @@ class Appointment(TimeStampedModel):
         try:  # Catch errors from deleted clinics.
             date: str = self.clinic.date.strftime('%Y-%m-%d')
         except AttributeError as e:
-            date: str = "Clinic deleted?"
+            date: str = "Clinic not set"
         return date
     get_clinic_date.short_description = 'Date'  # Where in the world is .short_description documented?
 

@@ -4,31 +4,49 @@ from django.contrib import admin, messages
 from adminsortable2.admin import SortableInlineAdminMixin
 from guardian.admin import GuardedModelAdmin
 from guardian.shortcuts import assign_perm, get_objects_for_user, get_groups_with_perms
+from django.utils.html import mark_safe
 
 from .models import Clinic
 from foxtail.appointments.models import Appointment
 
 
-class AppointmentInLine(SortableInlineAdminMixin, admin.TabularInline):
-    """ Edit Appointment instances from within the Clinic admin panel. """
+class AppointmentInLineTabular(SortableInlineAdminMixin, admin.TabularInline):
+    """
+    TabularInLineView with the ability to drag the rows around. The sad intention here is to use the two views
+    below to allow the view to be opened with two different inlines, in side by side browser windows, to make
+    it easier to schedule attorneys by dragging them around in the TabularInLine view while looking at the
+    case descriptions from the StackedInLine view.
+    """
     model = Appointment
     show_change_link = True
     # ordering = ('time_slot',)  # Sorts the display of Appointment OBJECTS. Not the contents.
     fields = ('attorney', 'time_slot', 'name', 'language', 'status')
     # exclude = ['created_by', 'phone', 'email', 'address', 'organization', 'description', 'waiver',]
 
-    # def clean(self):
-    #     """ Validate the Appointment input. """
-
-
-class AppointmentInLineTwo(admin.StackedInline):
+class AppointmentInLineStacked(admin.StackedInline):
+    """
+    The StackedInLine counterpart to the TabularInLine view. This view makes it easier to see the case description.
+    """
     model = Appointment
     show_change_link = True
     fields = ('attorney', 'time_slot', 'name', 'language', 'status', 'description')
-    # readonly_fields = ('name', 'description', 'language', 'status',)
+
+def create_modeladmin(modeladmin, model, name=None):
+    """
+    Helper function to use a proxy model to register the same model twice in the admin panel.
+    Note the two views both inherit from ClinicAdmin() and change only the inlines.
+    Source: https://stackoverflow.com/questions/2223375/multiple-modeladmins-views-for-same-model-in-django-admin
+    """
+    class Meta:
+        proxy = True
+        app_label = model._meta.app_label
+
+    attrs = {'__module__': '', 'Meta': Meta}
+    newmodel = type(name, (model,), attrs)
+    admin.site.register(newmodel, modeladmin)
+    return modeladmin
 
 
-@admin.register(Clinic)
 class ClinicAdmin(GuardedModelAdmin):
     """
     This was not at all intuitive to me. To make this work I needed to:
@@ -87,8 +105,16 @@ class ClinicAdmin(GuardedModelAdmin):
         'organization',
     )
     exclude = ['created_by']
-    inlines = [
-        AppointmentInLine,
-        # AppointmentInLineTwo
-    ]
     ordering = ('-date',)  # Sorts the list on the main Clinics page in reverse chronological order.
+
+
+class TabularClinicAdmin(ClinicAdmin):
+    inlines = (AppointmentInLineTabular,)
+
+class StackedClinicAdmin(ClinicAdmin):
+    inlines = (AppointmentInLineStacked,)
+
+create_modeladmin(TabularClinicAdmin, name='Clinic-list-tabular', model=Clinic)
+create_modeladmin(StackedClinicAdmin, name='Clinic-list-stacked', model=Clinic)
+
+
