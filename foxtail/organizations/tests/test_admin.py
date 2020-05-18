@@ -17,6 +17,9 @@ class OrganizationAdminTests(TestCase):
         self.ORG1_user = User.objects.get(username='ORG1_user')
         self.ORG2_user = User.objects.get(username='ORG2_user')
 
+    def teardown(self):
+        self.ORG1_user.delete()
+        self.ORG2_user.delete()
 
     def test_clinic_staff_cannot_view_organizations(self):
         # Ensure by default clinic staff can't view organizations.

@@ -48,7 +48,7 @@ class Appointment(TimeStampedModel):
     status = models.CharField('Status', choices=Status.choices, max_length=255, default='waiver-emailed')
     tracker = FieldTracker(fields=['status'])
     # ForeignKeys
-    clinic = models.ForeignKey(Clinic, on_delete=models.SET_NULL, null=True, related_name='appointments')
+    clinic = models.ForeignKey(Clinic, on_delete=models.SET_NULL, null=True, blank=True, related_name='appointments')
     attorney = models.ForeignKey(Attorney, on_delete=models.SET_NULL, null=True, blank=True,
                                  related_name='appointments')
     organization = models.ForeignKey(Organization, on_delete=models.SET_NULL, null=True, related_name='appointments')
@@ -63,11 +63,12 @@ class Appointment(TimeStampedModel):
         ordering = ['admin_order']
 
     def clean(self) -> None:
-        # Make sure scheduled clinic and organization match
-        if self.clinic.organization != self.organization:
-            raise ValidationError({'clinic': 'The scheduled clinic and organization must match.'})
-        if self.clinic.date < Date.today():
-            raise ValidationError({'clinic': 'The clinic date can\'t be in the past'})
+        # Make sure scheduled clinic and organization match, but only if a clinic is scheduled.
+        if self.clinic:
+            if self.clinic.organization != self.organization:
+                raise ValidationError({'clinic': 'The scheduled clinic and organization must match.'})
+            if self.clinic.date < Date.today():
+                raise ValidationError({'clinic': 'The clinic date can\'t be in the past'})
 
         # Make sure attorney is not already scheduled for this date and time.
         def check_for_double_booked_attorney(attorney):

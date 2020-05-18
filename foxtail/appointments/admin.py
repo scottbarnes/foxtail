@@ -34,6 +34,9 @@ class AppointmentAdmin(GuardedModelAdmin):
         Use assign_perm from django-admin to give the creator's group permissions to the object instance. If the creator
         does not have only one group, presumably the person is an admin. Use the messages framework to flash a WARNING
         if when this happens to alert the admin to set the permissions manually.
+
+        In conjunction with the get_queryset() override above, the result is that viewing the AppointmentAdmin page
+        shows only instances of Appointment that one (or one's group) owns.
         """
         obj.created_by = request.user
         super(AppointmentAdmin, self).save_model(request, obj, form, change)
@@ -66,5 +69,5 @@ class AppointmentAdmin(GuardedModelAdmin):
         'time_slot',
         'phone',
     )
-    exclude = ['created_by']
+    exclude = ['created_by', 'admin_order']
     # autocomplete_fields = ['attorney']
