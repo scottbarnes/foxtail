@@ -28,11 +28,26 @@ class Clinic(TimeStampedModel):
     created_by = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, blank=True, null=True,
                                    related_name='clinics_created')  # null=True necessary because of SET_NULL.
 
+    class Meta:
+        verbose_name = ('Tabular clinic view')
+        verbose_name_plural = ('Tabular clinic views')
+
     def get_organization(self):
         # This should return the organization name for the clinic. Needs testing.
         return self.organization.name
 
     def __str__(self):
         return f'{self.organization.abbreviation}: {self.date}'
+
+
+class ClinicProxy(Clinic):
+    """
+    :((((((((((((
+    Source: https://books.agiliq.com/projects/django-admin-cookbook/en/latest/add_model_twice.html
+    """
+    class Meta:
+        proxy = True
+        verbose_name = ('Stacked clinic view')
+        verbose_name_plural = ('Stacked clinic views')
 
 

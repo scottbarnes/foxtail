@@ -4,9 +4,8 @@ from django.contrib import admin, messages
 from adminsortable2.admin import SortableInlineAdminMixin
 from guardian.admin import GuardedModelAdmin
 from guardian.shortcuts import assign_perm, get_objects_for_user, get_groups_with_perms
-from django.utils.html import mark_safe
 
-from .models import Clinic
+from .models import Clinic, ClinicProxy
 from foxtail.appointments.models import Appointment
 
 
@@ -23,6 +22,7 @@ class AppointmentInLineTabular(SortableInlineAdminMixin, admin.TabularInline):
     fields = ('attorney', 'time_slot', 'name', 'language', 'status')
     # exclude = ['created_by', 'phone', 'email', 'address', 'organization', 'description', 'waiver',]
 
+
 class AppointmentInLineStacked(admin.StackedInline):
     """
     The StackedInLine counterpart to the TabularInLine view. This view makes it easier to see the case description.
@@ -31,22 +31,8 @@ class AppointmentInLineStacked(admin.StackedInline):
     show_change_link = True
     fields = ('attorney', 'time_slot', 'name', 'language', 'status', 'description')
 
-def create_modeladmin(modeladmin, model, name=None):
-    """
-    Helper function to use a proxy model to register the same model twice in the admin panel.
-    Note the two views both inherit from ClinicAdmin() and change only the inlines.
-    Source: https://stackoverflow.com/questions/2223375/multiple-modeladmins-views-for-same-model-in-django-admin
-    """
-    class Meta:
-        proxy = True
-        app_label = model._meta.app_label
 
-    attrs = {'__module__': '', 'Meta': Meta}
-    newmodel = type(name, (model,), attrs)
-    admin.site.register(newmodel, modeladmin)
-    return modeladmin
-
-
+@admin.register(Clinic)
 class ClinicAdmin(GuardedModelAdmin):
     """
     This was not at all intuitive to me. To make this work I needed to:
@@ -60,6 +46,9 @@ class ClinicAdmin(GuardedModelAdmin):
         errors. Specifically trying to use group_can_access_owned_by_group_objects_only = True didn't work (though
         user_can_access_owned_objects_only = True did work...).
     Note: the inlines won't display unless access is setup with django-guardian and appropriate permissions.
+
+    Source for using proxies to view a single object multiple times in the admin panel:
+    https://books.agiliq.com/projects/django-admin-cookbook/en/latest/add_model_twice.html
     """
 
     def get_queryset(self, request):
@@ -106,15 +95,13 @@ class ClinicAdmin(GuardedModelAdmin):
     )
     exclude = ['created_by']
     ordering = ('-date',)  # Sorts the list on the main Clinics page in reverse chronological order.
-
-
-class TabularClinicAdmin(ClinicAdmin):
     inlines = (AppointmentInLineTabular,)
 
-class StackedClinicAdmin(ClinicAdmin):
+
+@admin.register(ClinicProxy)
+class ClinicProxyAdmin(ClinicAdmin):
+    """
+    Inherit from ClinicAdmin, but change only the inlines.
+    """
     inlines = (AppointmentInLineStacked,)
-
-create_modeladmin(TabularClinicAdmin, name='Clinic-list-tabular', model=Clinic)
-create_modeladmin(StackedClinicAdmin, name='Clinic-list-stacked', model=Clinic)
-
 
